@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bible_new/reading.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,12 +17,14 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -30,52 +34,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List versions = ['ESV', 'KJV', 'NIV', 'NLT'];
 
-  // int count = 0;
-  // print(document
-  //     .findAllElements('testament')
-  //     .elementAt(1)
-  //     .findAllElements('book')
-  //     .elementAt(3)
-  //     .findAllElements('chapter')
-  //     .elementAt(10)
-  //     .findAllElements('verse')
-  //     .map((verse) {
-  //   count += 1;
-  //   print('$count. ${verse.text}');
-  //   print('');
-  // }));
-
+  @override
   void initState() {
     super.initState();
     _bibleVersion = versions.first;
   }
 
-  List<Widget> _getBibleVersions() {
-    List<Widget> bibleVersions = [];
+  List<DropdownMenuItem<String>> _getBibleVersions() {
+    List<DropdownMenuItem<String>> bibleVersions = [];
     for (String version in versions) {
       bibleVersions.add(
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(version),
-            Radio(
-              value: version.toString(), // Cast version to String
-              groupValue: _bibleVersion,
-              onChanged: (value) {
-                setState(() {
-                  _bibleVersion = value as String; // Cast value to String
-                });
-              },
-            ),
-          ],
+        DropdownMenuItem<String>(
+          value: version,
+          child: Text(
+            version,
+            style: const TextStyle(fontSize: 16),
+          ),
         ),
       );
     }
     return bibleVersions;
   }
 
-  Map _bibleStructure = {
+  final Map _bibleStructure = {
     0: {
       "Genesis": 50,
       "Exodus": 40,
@@ -153,17 +134,31 @@ class _MyHomePageState extends State<MyHomePage> {
     int test = 0;
     bibleStructure.add(
       Padding(
-        padding: const EdgeInsets.fromLTRB(15, 15, 0, 25),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          child: Text(
-            'Old Testament',
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(
+              child: Text(
+                'Old Testament',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
+            Flexible(
+              child: DropdownButton<String>(
+                value: _bibleVersion,
+                items: _getBibleVersions(),
+                onChanged: (String? value) {
+                  _bibleVersion = value!;
+                  setState(() {});
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -173,13 +168,11 @@ class _MyHomePageState extends State<MyHomePage> {
         bibleStructure.add(
           Container(
             width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  width: 1,
-                  color: Color(
-                    0XFF595959,
-                  ),
+                  width: 0.5,
+                  color: Colors.grey,
                 ),
               ),
             ),
@@ -199,12 +192,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(book),
+                          Text(
+                            book,
+                            style: const TextStyle(fontSize: 16),
+                          ),
                           _showVersesFor == book
-                              ? Icon(
+                              ? const Icon(
                                   Icons.keyboard_arrow_up,
                                 )
-                              : Icon(
+                              : const Icon(
                                   Icons.keyboard_arrow_down,
                                 ),
                         ],
@@ -240,9 +236,9 @@ class _MyHomePageState extends State<MyHomePage> {
         bibleStructure.add(
           Padding(
             padding: const EdgeInsets.fromLTRB(15, 15, 0, 25),
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              child: Text(
+              child: const Text(
                 'New Testament',
                 textAlign: TextAlign.start,
                 style: TextStyle(
@@ -271,18 +267,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: _getBibleVersions(),
-              ),
-            ),
             Column(
               children: _showBibleStructure(),
             ),
-            SizedBox(height: 55),
           ],
         ),
       ),
@@ -291,7 +278,8 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class VerseButton extends StatelessWidget {
-  VerseButton({
+  const VerseButton({
+    super.key,
     required this.testament,
     required this.book,
     required this.chapter,
@@ -328,12 +316,18 @@ class VerseButton extends StatelessWidget {
         child: Container(
           width: 45,
           height: 45,
-          decoration: BoxDecoration(
-            color: Colors.pink,
+          decoration: const BoxDecoration(
+            color: Colors.blueGrey,
             shape: BoxShape.circle,
           ),
           child: Center(
-            child: Text('${chapter + 1}'),
+            child: Text(
+              '${chapter + 1}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
       ),

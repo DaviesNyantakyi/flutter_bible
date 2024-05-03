@@ -38,10 +38,10 @@ class NotesDatabaseService {
       'verse',
       'content',
     ]);
-    if (maps.length > 0) {
-      maps.forEach((map) {
+    if (maps.isNotEmpty) {
+      for (var map in maps) {
         notesList.add(map);
-      });
+      }
     }
     return notesList;
   }

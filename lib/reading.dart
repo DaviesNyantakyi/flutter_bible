@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter_bible_new/note.dart';
 import 'package:xml/xml.dart';
 
 class BibleReading extends StatefulWidget {
   BibleReading({
+    super.key,
     required this.testament,
     required this.book,
     required this.chapter,
@@ -51,6 +51,7 @@ class _BibleReadingState extends State<BibleReading> {
     });
   }
 
+  @override
   void initState() {
     super.initState();
     getXmlDoc();
@@ -83,7 +84,7 @@ class _BibleReadingState extends State<BibleReading> {
     return bibleVersions;
   }
 
-  Map _bibleStructure = {
+  final Map _bibleStructure = {
     0: {
       "Genesis": 50,
       "Exodus": 40,
@@ -243,7 +244,7 @@ class _BibleReadingState extends State<BibleReading> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             size: 18,
             color: Colors.black,
@@ -256,7 +257,7 @@ class _BibleReadingState extends State<BibleReading> {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back,
                   color: Colors.black,
                 ),
@@ -264,19 +265,21 @@ class _BibleReadingState extends State<BibleReading> {
                   _previous();
                 }),
             Text(
-              '${_bibleStructure[widget.testament].keys.elementAt(widget.book)} - ${widget.chapter + 1}',
-              style: TextStyle(
+              '${_bibleStructure[widget.testament].keys.elementAt(widget.book)} ${widget.chapter + 1}',
+              style: const TextStyle(
                 color: Colors.black,
+                fontWeight: FontWeight.bold,
               ),
             ),
             IconButton(
-                icon: Icon(
-                  Icons.arrow_forward,
-                  color: Colors.black,
-                ),
-                onPressed: () {
-                  _next();
-                }),
+              icon: const Icon(
+                Icons.arrow_forward,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                _next();
+              },
+            ),
           ],
         ),
       ),
@@ -297,63 +300,38 @@ class _BibleReadingState extends State<BibleReading> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       for (String verse in verses)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Note(
-                                  passage:
-                                      '${_bibleStructure[widget.testament].keys.elementAt(widget.book)} ${widget.chapter + 1}:${verses.indexOf(verse) + 1}',
-                                  verse: verse,
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  width: 1,
-                                  color: Color(
-                                    0XFF595959,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: RichText(
-                                text: TextSpan(
-                                  text: '${verses.indexOf(verse) + 1}. ',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.pink,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: '$verse',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                      ),
+                        SizedBox(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: '${verses.indexOf(verse) + 1} ',
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  TextSpan(
+                                    text: verse,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
                     ],
                   ),
-                  SizedBox(
-                    height: 45,
-                  ),
                 ],
               ),
             )
-          : Center(
+          : const Center(
               child: CircularProgressIndicator(),
             ),
     );
